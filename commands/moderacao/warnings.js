@@ -86,10 +86,11 @@ module.exports = {
                     );
 
                 return (
-                    `**${index + 1}.** ${warning.motivo}\n` +
-                    `👮 Moderador: <@${warning.moderadorId}>\n` +
-                    `📅 Data: ${dataFormatada}`
-                );
+    `**ID:** \`${warning.id}\`\n` +
+    `📝 **Motivo:** ${warning.motivo}\n` +
+    `👮 **Moderador:** <@${warning.moderadorId}>\n` +
+    `📅 **Data:** ${dataFormatada}`
+);
             })
             .join("\n\n");
 
