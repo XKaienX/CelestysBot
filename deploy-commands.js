@@ -46,6 +46,22 @@ const commands = [
                 .setRequired(true)
         )
         .setDefaultMemberPermissions(0x0000010000000000)
+        .toJSON(),
+
+    // ========================================
+    // WARNINGS
+    // ========================================
+
+    new SlashCommandBuilder()
+        .setName("warnings")
+        .setDescription("Mostra as advertências de um membro.")
+        .addUserOption(option =>
+            option
+                .setName("membro")
+                .setDescription("Membro que deseja consultar.")
+                .setRequired(true)
+        )
+        .setDefaultMemberPermissions(0x0000010000000000)
         .toJSON()
 
 ];
