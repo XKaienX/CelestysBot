@@ -62,6 +62,28 @@ const commands = [
                 .setRequired(true)
         )
         .setDefaultMemberPermissions(0x0000010000000000)
+        .toJSON(),
+
+    // ========================================
+    // UNWARN
+    // ========================================
+
+    new SlashCommandBuilder()
+        .setName("unwarn")
+        .setDescription("Remove uma advertência de um membro.")
+        .addUserOption(option =>
+            option
+                .setName("membro")
+                .setDescription("Membro que terá a advertência removida.")
+                .setRequired(true)
+        )
+        .addStringOption(option =>
+            option
+                .setName("id")
+                .setDescription("ID da advertência que será removida.")
+                .setRequired(true)
+        )
+        .setDefaultMemberPermissions(0x0000010000000000)
         .toJSON()
 
 ];
