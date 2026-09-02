@@ -8,14 +8,44 @@ require("dotenv").config();
 
 const commands = [
 
+    // ========================================
+    // PING
+    // ========================================
+
     new SlashCommandBuilder()
         .setName("ping")
         .setDescription("Verifica se o Celestys Bot está funcionando.")
         .toJSON(),
 
+    // ========================================
+    // REGRAS
+    // ========================================
+
     new SlashCommandBuilder()
         .setName("regras")
         .setDescription("Exibe as regras do servidor.")
+        .toJSON(),
+
+    // ========================================
+    // WARN
+    // ========================================
+
+    new SlashCommandBuilder()
+        .setName("warn")
+        .setDescription("Aplica uma advertência a um membro.")
+        .addUserOption(option =>
+            option
+                .setName("membro")
+                .setDescription("Membro que receberá a advertência.")
+                .setRequired(true)
+        )
+        .addStringOption(option =>
+            option
+                .setName("motivo")
+                .setDescription("Motivo da advertência.")
+                .setRequired(true)
+        )
+        .setDefaultMemberPermissions(0x0000010000000000)
         .toJSON()
 
 ];
