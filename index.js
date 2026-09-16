@@ -86,9 +86,15 @@ async function buscarComprasPendentes() {
         );
 
         if (!resposta.ok) {
-            console.log("❌ Erro ao consultar compras pendentes.");
-            return [];
-        }
+
+    const erro = await resposta.text();
+
+    console.log("❌ Erro ao consultar compras pendentes.");
+    console.log("📊 Status:", resposta.status);
+    console.log("📄 Resposta:", erro);
+
+    return [];
+}
 
         const dados = await resposta.json();
 
