@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const fs = require("fs");
 const path = require("path");
+const BACKEND_URL = process.env.BACKEND_URL;
+const MINECRAFT_API_KEY = process.env.MINECRAFT_API_KEY;
 
 const {
     Client,
@@ -17,6 +19,12 @@ const client = new Client({
         GatewayIntentBits.GuildPresences
     ]
 });
+
+// ========================================
+// CANAL DE COMPRAS
+// ========================================
+
+const CANAL_COMPRAS_ID = "1549911766946025582";
 
 // ========================================
 // CARREGADOR DE COMANDOS
@@ -61,13 +69,138 @@ function carregarComandos(pasta) {
 carregarComandos(commandsPath);
 
 // ========================================
+// BUSCAR COMPRAS PENDENTES
+// ========================================
+
+async function buscarComprasPendentes() {
+
+    try {
+
+        const resposta = await fetch(
+            `${BACKEND_URL}/compras-pendentes`,
+            {
+                headers: {
+                    "x-api-key": MINECRAFT_API_KEY
+                }
+            }
+        );
+
+        if (!resposta.ok) {
+            console.log("❌ Erro ao consultar compras pendentes.");
+            return [];
+        }
+
+        const dados = await resposta.json();
+
+        return dados.compras || [];
+
+    } catch (error) {
+
+        console.error("❌ Erro ao conectar com o backend:");
+        console.error(error);
+
+        return [];
+    }
+}
+
+// ========================================
+// VERIFICAR E AVISAR SOBRE COMPRAS
+// ========================================
+
+setInterval(async () => {
+
+    const compras = await buscarComprasPendentes();
+
+    if (compras.length === 0) {
+        return;
+    }
+
+    const canalCompras = await client.channels.fetch(
+        CANAL_COMPRAS_ID
+    );
+
+    if (!canalCompras) {
+        console.log("❌ Canal de compras não encontrado.");
+        return;
+    }
+
+    for (const compra of compras) {
+
+        const embed = new EmbedBuilder()
+            .setColor("#8b5cf6")
+            .setTitle("🛒 NOVA COMPRA APROVADA")
+            .setDescription(
+                "Uma nova compra foi confirmada pelo Mercado Pago."
+            )
+            .addFields(
+                {
+                    name: "🆔 Pedido",
+                    value: String(compra.id),
+                    inline: true
+                },
+                {
+                    name: "🎮 Nick",
+                    value: compra.nick,
+                    inline: true
+                },
+                {
+                    name: "💰 Valor",
+                    value: `R$ ${Number(compra.valor_final).toFixed(2).replace(".", ",")}`,
+                    inline: true
+                }
+            )
+            .setTimestamp();
+
+        await canalCompras.send({
+            embeds: [embed]
+        });
+
+        await fetch(
+            `${BACKEND_URL}/compras/${compra.id}/notificado`,
+            {
+                method: "POST",
+                headers: {
+                    "x-api-key": MINECRAFT_API_KEY
+                }
+            }
+        );
+
+        console.log(
+            `🔔 Compra #${compra.id} enviada para o Discord.`
+        );
+    }
+
+}, 10000);
+
+// ========================================
 // BOT ONLINE
 // ========================================
 
-client.once("ready", () => {
+client.once("ready", async () => {
 
     console.log(`🤖 Bot conectado como ${client.user.tag}`);
     console.log("🟢 Celestys Bot está online!");
+
+    try {
+
+        const canalCompras = await client.channels.fetch(
+            CANAL_COMPRAS_ID
+        );
+
+        if (canalCompras) {
+            console.log(
+                `📦 Canal de compras encontrado: ${canalCompras.name}`
+            );
+        } else {
+            console.log("❌ Canal de compras não encontrado.");
+        }
+
+    } catch (error) {
+
+        console.error("❌ Erro ao acessar o canal de compras:");
+        console.error(error);
+
+    }
 
 });
 
