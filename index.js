@@ -77,7 +77,7 @@ async function buscarComprasPendentes() {
     try {
 
         console.log("🌐 URL do backend:", BACKEND_URL);
-        
+
         const resposta = await fetch(
             `${BACKEND_URL}/compras-pendentes`,
             {
@@ -155,6 +155,11 @@ setInterval(async () => {
                     name: "💰 Valor",
                     value: `R$ ${Number(compra.valor_final).toFixed(2).replace(".", ",")}`,
                     inline: true
+                },
+                {
+                    name: "📦 Produto",
+                    value: `${compra.produto_nome} ×${compra.quantidade}`,
+                    inline: false
                 }
             )
             .setTimestamp();
