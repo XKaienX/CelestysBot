@@ -100,7 +100,9 @@ async function buscarComprasPendentes() {
 
         const dados = await resposta.json();
 
-        return dados.compras || [];
+console.log("📦 Resposta do backend:", dados);
+
+return dados.compras || [];
 
     } catch (error) {
 
