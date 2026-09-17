@@ -76,6 +76,8 @@ async function buscarComprasPendentes() {
 
     try {
 
+        console.log("🌐 URL do backend:", BACKEND_URL);
+        
         const resposta = await fetch(
             `${BACKEND_URL}/compras-pendentes`,
             {
